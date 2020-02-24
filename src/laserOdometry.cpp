@@ -58,6 +58,17 @@
 
 #define DISTORTION 0
 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+#define RESET "\033[0m"
+
+std::string loam_id;
 
 int corner_correspondence = 0, plane_correspondence = 0;
 
@@ -185,32 +196,40 @@ void laserCloudFullResHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloud
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "laserOdometry");
-    ros::NodeHandle nh;
+    ros::init(argc, argv, "~");//"laserOdometry");
+    ros::NodeHandle nh("~");
+
+    if( nh.getParam("loam_id", loam_id) )
+        printf("loam_id found: %s\n", loam_id.c_str());
+    else
+    {
+        printf(KRED "loam_id not found. Exitting!\n" RESET);
+        exit(-1);
+    }
 
     nh.param<int>("mapping_skip_frame", skipFrameNum, 2);
 
     printf("Mapping %d Hz \n", 10 / skipFrameNum);
 
-    ros::Subscriber subCornerPointsSharp = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_sharp", 100, laserCloudSharpHandler);
+    ros::Subscriber subCornerPointsSharp = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_sharp_" + loam_id, 100, laserCloudSharpHandler);
 
-    ros::Subscriber subCornerPointsLessSharp = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_less_sharp", 100, laserCloudLessSharpHandler);
+    ros::Subscriber subCornerPointsLessSharp = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_less_sharp_" + loam_id, 100, laserCloudLessSharpHandler);
 
-    ros::Subscriber subSurfPointsFlat = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_flat", 100, laserCloudFlatHandler);
+    ros::Subscriber subSurfPointsFlat = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_flat_" + loam_id, 100, laserCloudFlatHandler);
 
-    ros::Subscriber subSurfPointsLessFlat = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_less_flat", 100, laserCloudLessFlatHandler);
+    ros::Subscriber subSurfPointsLessFlat = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_less_flat_" + loam_id, 100, laserCloudLessFlatHandler);
 
-    ros::Subscriber subLaserCloudFullRes = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_cloud_2", 100, laserCloudFullResHandler);
+    ros::Subscriber subLaserCloudFullRes = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_cloud_2_" + loam_id, 100, laserCloudFullResHandler);
 
-    ros::Publisher pubLaserCloudCornerLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_corner_last", 100);
+    ros::Publisher pubLaserCloudCornerLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_corner_last_" + loam_id, 100);
 
-    ros::Publisher pubLaserCloudSurfLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_surf_last", 100);
+    ros::Publisher pubLaserCloudSurfLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_surf_last_" + loam_id, 100);
 
-    ros::Publisher pubLaserCloudFullRes = nh.advertise<sensor_msgs::PointCloud2>("/velodyne_cloud_3", 100);
+    ros::Publisher pubLaserCloudFullRes = nh.advertise<sensor_msgs::PointCloud2>("/velodyne_cloud_3_" + loam_id, 100);
 
-    ros::Publisher pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/laser_odom_to_init", 100);
+    ros::Publisher pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/laser_odom_to_init_" + loam_id, 100);
 
-    ros::Publisher pubLaserPath = nh.advertise<nav_msgs::Path>("/laser_odom_path", 100);
+    ros::Publisher pubLaserPath = nh.advertise<nav_msgs::Path>("/laser_odom_path_" + loam_id, 100);
 
     nav_msgs::Path laserPath;
 
@@ -509,8 +528,8 @@ int main(int argc, char **argv)
 
             // publish odometry
             nav_msgs::Odometry laserOdometry;
-            laserOdometry.header.frame_id = "/camera_init";
-            laserOdometry.child_frame_id = "/laser_odom";
+            laserOdometry.header.frame_id = "/camera_init_" + loam_id;
+            laserOdometry.child_frame_id = "/laser_odom_" + loam_id;
             laserOdometry.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
             laserOdometry.pose.pose.orientation.x = q_w_curr.x();
             laserOdometry.pose.pose.orientation.y = q_w_curr.y();
@@ -526,7 +545,7 @@ int main(int argc, char **argv)
             laserPose.pose = laserOdometry.pose.pose;
             laserPath.header.stamp = laserOdometry.header.stamp;
             laserPath.poses.push_back(laserPose);
-            laserPath.header.frame_id = "/camera_init";
+            laserPath.header.frame_id = "/camera_init_" + loam_id;
             pubLaserPath.publish(laserPath);
 
             // transform corner features and plane features to the scan end point
@@ -574,19 +593,19 @@ int main(int argc, char **argv)
                 sensor_msgs::PointCloud2 laserCloudCornerLast2;
                 pcl::toROSMsg(*laserCloudCornerLast, laserCloudCornerLast2);
                 laserCloudCornerLast2.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
-                laserCloudCornerLast2.header.frame_id = "/camera";
+                laserCloudCornerLast2.header.frame_id = "/camera_" + loam_id;
                 pubLaserCloudCornerLast.publish(laserCloudCornerLast2);
 
                 sensor_msgs::PointCloud2 laserCloudSurfLast2;
                 pcl::toROSMsg(*laserCloudSurfLast, laserCloudSurfLast2);
                 laserCloudSurfLast2.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
-                laserCloudSurfLast2.header.frame_id = "/camera";
+                laserCloudSurfLast2.header.frame_id = "/camera_" + loam_id;
                 pubLaserCloudSurfLast.publish(laserCloudSurfLast2);
 
                 sensor_msgs::PointCloud2 laserCloudFullRes3;
                 pcl::toROSMsg(*laserCloudFullRes, laserCloudFullRes3);
                 laserCloudFullRes3.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
-                laserCloudFullRes3.header.frame_id = "/camera";
+                laserCloudFullRes3.header.frame_id = "/camera_" + loam_id;
                 pubLaserCloudFullRes.publish(laserCloudFullRes3);
             }
             printf("publication time %f ms \n", t_pub.toc());
