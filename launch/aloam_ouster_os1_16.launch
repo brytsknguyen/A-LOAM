@@ -8,9 +8,9 @@
 
         <!-- scan registration -->
         <rosparam param="/ascanRegistration_$(arg loam_id)/T_B_Bl">
-            [-1.0,  0.0,  0.0,  0.0,
+            [-1.0,  0.0,  0.0, -0.05,
               0.0,  1.0,  0.0,  0.0,
-              0.0,  0.0, -1.0,  0.0,
+              0.0,  0.0, -1.0,  0.05,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
         <node pkg="aloam_velodyne" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
@@ -34,7 +34,7 @@
         </node>
 
         <node pkg="tf" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
-              args="0 0 0 1 0 0 0 world camera_init_$(arg loam_id) 10" />
+              args="0 0 0 -1.719149313214415 0 3.141592653589793 world camera_init_$(arg loam_id) 10" />
 
     </group>
 
@@ -46,9 +46,9 @@
 
         <!-- scan registration -->
         <rosparam param="/ascanRegistration_$(arg loam_id)/T_B_Bl">
-            [-1.0,  0.0,  0.0,  0.0,
+            [-1.0,  0.0,  0.0, -0.56,
               0.0,  0.0,  1.0,  0.0,
-              0.0,  1.0,  0.0,  0.0,
+              0.0,  1.0,  0.0,  0.05,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
         <node pkg="aloam_velodyne" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
@@ -72,7 +72,7 @@
         </node>
 
         <node pkg="tf" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
-              args="0 0 0 0 0.707106781187 -0.707106781187 0 world camera_init_$(arg loam_id) 10" />
+              args="0 0 0 1.431169986635350 0 -1.570796326794897 world camera_init_$(arg loam_id) 10" />
 
     </group>
 
@@ -83,6 +83,6 @@
 
     <param name ="/use_sim_time" value="true"/>
     <node  pkg="rosbag" required ="false" type="play" name="player"
-           args="--clock $(env HOME)/DATASETS/bca/clementi_20200116/007_321_facade_complete/imu_uwb_vio_lidar_leica.bag" />
+           args="--clock $(env HOME)/DATASETS/bca/clementi_20200116/007_321_facade_complete/imu_uwb_cam_lidar_leica.bag" />
 
 </launch>

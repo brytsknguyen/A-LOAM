@@ -6,8 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Grid1
-        - /odometry_horz1
         - /odometry_horz1/odomPath1
         - /mapping_horz1/mappingPath1
         - /mapping_horz1/allMapCloud1
@@ -52,7 +50,7 @@ Visualization Manager:
       Cell Size: 1
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: false
+      Enabled: true
       Line Style:
         Line Width: 0.0299999993
         Value: Lines
@@ -65,7 +63,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 160
       Reference Frame: <Fixed Frame>
-      Value: false
+      Value: true
     - Class: rviz/Axes
       Enabled: false
       Length: 1
@@ -675,6 +673,12 @@ Visualization Manager:
           Value: true
         camera_init_horz:
           Value: true
+        leica_abs:
+          Value: true
+        leica_rel:
+          Value: true
+        map:
+          Value: true
         world:
           Value: true
       Marker Scale: 1
@@ -1091,25 +1095,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 160.079651
+      Distance: 75.2999954
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0486650467
-        Y: -0.501457632
+        X: 0.526914001
+        Y: 0.16811043
         Z: -2.30979729
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.56979632
+      Pitch: 0.554795802
       Target Frame: body
       Value: XYOrbit (rviz)
-      Yaw: 3.49995518
+      Yaw: 3.51495814
     Saved: ~
 Window Geometry:
   Displays:
