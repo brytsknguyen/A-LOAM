@@ -324,6 +324,10 @@ void process()
 			int centerCubeJ = int((t_w_curr.y() + 25.0) / 50.0) + laserCloudCenHeight;
 			int centerCubeK = int((t_w_curr.z() + 25.0) / 50.0) + laserCloudCenDepth;
 
+			printf("centerCube: %d, %d, %d. laserCloudCen: %d, %d, %d\n",
+					centerCubeI, centerCubeJ, centerCubeK,
+					laserCloudCenWidth, laserCloudCenHeight, laserCloudCenDepth);
+
 			if (t_w_curr.x() + 25.0 < 0)
 				centerCubeI--;
 			if (t_w_curr.y() + 25.0 < 0)
@@ -331,6 +335,8 @@ void process()
 			if (t_w_curr.z() + 25.0 < 0)
 				centerCubeK--;
 
+			// When robot gets to the lower bound of cloud, then shift the cloud corner/surf arrays
+			// so that the centercube i,j,k index can be safely buffered from the boundary
 			while (centerCubeI < 3)
 			{
 				for (int j = 0; j < laserCloudHeight; j++)
@@ -361,6 +367,9 @@ void process()
 				centerCubeI++;
 				laserCloudCenWidth++;
 			}
+
+			printf("1: centerCubeI: %d. laserCloudCenWidth: %d\n",
+					centerCubeI, laserCloudCenWidth);
 
 			while (centerCubeI >= laserCloudWidth - 3)
 			{ 
@@ -393,6 +402,9 @@ void process()
 				laserCloudCenWidth--;
 			}
 
+			printf("2: centerCubeI: %d. laserCloudCenWidth: %d\n",
+								centerCubeI, laserCloudCenWidth);
+					
 			while (centerCubeJ < 3)
 			{
 				for (int i = 0; i < laserCloudWidth; i++)
@@ -423,6 +435,9 @@ void process()
 				centerCubeJ++;
 				laserCloudCenHeight++;
 			}
+
+			printf("3: centerCubeJ: %d. laserCloudCenWidth: %d\n",
+					centerCubeJ, laserCloudCenHeight);
 
 			while (centerCubeJ >= laserCloudHeight - 3)
 			{
@@ -455,6 +470,9 @@ void process()
 				laserCloudCenHeight--;
 			}
 
+			printf("4: centerCubeJ: %d. laserCloudCenWidth: %d\n",
+					centerCubeJ, laserCloudCenHeight);
+
 			while (centerCubeK < 3)
 			{
 				for (int i = 0; i < laserCloudWidth; i++)
@@ -485,6 +503,9 @@ void process()
 				centerCubeK++;
 				laserCloudCenDepth++;
 			}
+
+			printf("5: centerCubeK: %d. laserCloudCenDepth: %d\n",
+					centerCubeK, laserCloudCenDepth);
 
 			while (centerCubeK >= laserCloudDepth - 3)
 			{
@@ -517,6 +538,9 @@ void process()
 				laserCloudCenDepth--;
 			}
 
+			printf("6: centerCubeK: %d. laserCloudCenDepth: %d\n",
+					centerCubeK, laserCloudCenDepth);
+
 			int laserCloudValidNum = 0;
 			int laserCloudSurroundNum = 0;
 
@@ -530,9 +554,11 @@ void process()
 							j >= 0 && j < laserCloudHeight &&
 							k >= 0 && k < laserCloudDepth)
 						{ 
-							laserCloudValidInd[laserCloudValidNum] = i + laserCloudWidth * j + laserCloudWidth * laserCloudHeight * k;
+							laserCloudValidInd[laserCloudValidNum]
+								= i + laserCloudWidth * j + laserCloudWidth * laserCloudHeight * k;
 							laserCloudValidNum++;
-							laserCloudSurroundInd[laserCloudSurroundNum] = i + laserCloudWidth * j + laserCloudWidth * laserCloudHeight * k;
+							laserCloudSurroundInd[laserCloudSurroundNum]
+								= i + laserCloudWidth * j + laserCloudWidth * laserCloudHeight * k;
 							laserCloudSurroundNum++;
 						}
 					}
@@ -546,9 +572,17 @@ void process()
 				*laserCloudCornerFromMap += *laserCloudCornerArray[laserCloudValidInd[i]];
 				*laserCloudSurfFromMap += *laserCloudSurfArray[laserCloudValidInd[i]];
 			}
+			for(int i = 0; i < laserCloudNum; i++)
+			{
+				if( laserCloudCornerArray[i]->points.size() != 0 )
+				{
+					printf("Cube: %d. Size: %d\n", i, laserCloudCornerArray[i]->points.size());
+				}
+			}
+			printf("laserCloudCornerFromMap->points.size(): %d.\n",
+				   laserCloudCornerFromMap->points.size());
 			int laserCloudCornerFromMapNum = laserCloudCornerFromMap->points.size();
 			int laserCloudSurfFromMapNum = laserCloudSurfFromMap->points.size();
-
 
 			pcl::PointCloud<PointType>::Ptr laserCloudCornerStack(new pcl::PointCloud<PointType>());
 			downSizeFilterCorner.setInputCloud(laserCloudCornerLast);
@@ -561,7 +595,10 @@ void process()
 			int laserCloudSurfStackNum = laserCloudSurfStack->points.size();
 
 			printf("map prepare time %f ms\n", t_shift.toc());
-			printf("map corner num %d  surf num %d \n", laserCloudCornerFromMapNum, laserCloudSurfFromMapNum);
+			printf("map corner num %d, surf num %d. "
+				   "laserCloudValidNum: %d. laserCloudSurroundNum: %d\n",
+				   laserCloudCornerFromMapNum, laserCloudSurfFromMapNum,
+				   laserCloudValidNum, laserCloudSurroundNum);
 			if (laserCloudCornerFromMapNum > 10 && laserCloudSurfFromMapNum > 50)
 			{
 				TicToc t_opt;
@@ -860,7 +897,7 @@ void process()
 
 			printf("mapping pub time %f ms \n", t_pub.toc());
 
-			printf("whole mapping time %f ms +++++\n", t_whole.toc());
+			printf("whole mapping time %f ms +++++\n\n", t_whole.toc());
 
 			nav_msgs::Odometry odomAftMapped;
 			odomAftMapped.header.frame_id = "/lidar_init_" + loam_id;

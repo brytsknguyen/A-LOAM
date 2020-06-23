@@ -133,6 +133,13 @@ void TransformToStart(PointType const *const pi, PointType *const po)
     Eigen::Vector3d point(pi->x, pi->y, pi->z);
     Eigen::Vector3d un_point = q_point_last * point + t_point_last;
 
+    // printf("s = %f.\n"
+    //        "q_in: %f, %f, %f, %f.\n"
+    //        "q_ou: %f, %f, %f, %f \n",
+    //         s,
+    //         q_last_curr.x(), q_last_curr.y(), q_last_curr.z(), q_last_curr.w(),
+    //         q_point_last.x(), q_point_last.y(), q_point_last.z(), q_point_last.w());
+
     po->x = un_point.x();
     po->y = un_point.y();
     po->z = un_point.z();
@@ -317,6 +324,12 @@ int main(int argc, char **argv)
                     // find correspondence for corner features
                     for (int i = 0; i < cornerPointsSharpNum; ++i)
                     {
+                        // printf("timeCornerPointsSharp: %f\n", timeCornerPointsSharp);                        
+                        // printf("timeCornerPointsLessSharp: %f\n", timeCornerPointsLessSharp);                        
+                        // printf("timeSurfPointsFlat: %f\n", timeSurfPointsFlat);                        
+                        // printf("timeSurfPointsLessFlat: %f\n", timeSurfPointsLessFlat);
+                        // printf("timeLaserCloudFullRes: %f\n", timeLaserCloudFullRes);
+                        
                         TransformToStart(&(cornerPointsSharp->points[i]), &pointSel);
                         kdtreeCornerLast->nearestKSearch(pointSel, 1, pointSearchInd, pointSearchSqDis);
 
@@ -332,11 +345,19 @@ int main(int argc, char **argv)
                             {
                                 // if in the same scan line, continue
                                 if (int(laserCloudCornerLast->points[j].intensity) <= closestPointScanID)
+                                {
+                                    // printf("laserCloudCornerLast->points[j].intensity: %f. closestPointScanID: %d\n",
+                                    //         laserCloudCornerLast->points[j].intensity, closestPointScanID);
                                     continue;
+                                }
 
                                 // if not in nearby scans, end the loop
                                 if (int(laserCloudCornerLast->points[j].intensity) > (closestPointScanID + NEARBY_SCAN))
                                     break;
+
+                                // printf("Found second corresponding corner point at scan %f. First corr corner at scan %f\n",
+                                //         laserCloudCornerLast->points[j].intensity,
+                                //         laserCloudCornerLast->points[closestPointInd].intensity);
 
                                 double pointSqDis = (laserCloudCornerLast->points[j].x - pointSel.x) *
                                                         (laserCloudCornerLast->points[j].x - pointSel.x) +
@@ -379,6 +400,7 @@ int main(int argc, char **argv)
                                 }
                             }
                         }
+                        
                         if (minPointInd2 >= 0) // both closestPointInd and minPointInd2 is valid
                         {
                             Eigen::Vector3d curr_point(cornerPointsSharp->points[i].x,
