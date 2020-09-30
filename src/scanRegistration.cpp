@@ -70,6 +70,8 @@ using std::cos;
 using std::sin;
 
 std::string loam_id;
+double ring_coeff1 = 16.611;
+double ring_coeff2 = 2.1093;
 
 const double    scanPeriod = 0.1;
 
@@ -148,6 +150,9 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     pcl::PointCloud<pcl::PointXYZ> laserCloudIn;
     pcl::fromROSMsg(*laserCloudMsg, laserCloudIn);
 
+    std::cout << "laserCloudMsg datasize: " << laserCloudMsg->data.size() << " "
+              << "laserCloudIn points: "    << laserCloudIn.points.size() << std::endl;
+
     if (T_B_Bl(3, 3) != 0.0)
         pcl::transformPointCloud(laserCloudIn, laserCloudIn, T_B_Bl);
 
@@ -177,6 +182,9 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     int count = cloudSize;
     PointType point;
     std::vector<pcl::PointCloud<PointType>> laserCloudScans(N_SCANS);
+
+    std::map<int, int> scan_checklist;
+    
     for (int i = 0; i < cloudSize; i++)
     {
         point.x = laserCloudIn.points[i].x;
@@ -188,9 +196,14 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 
         if (N_SCANS == 16)
         {
-            scanID = int((angle + 15) / 2 + 0.5);
+            // For ouster gen 1, 16 channels, -16.611 deg to 16.611 deg.
+            // The increment of 2.1093 is calculated by 16.611*2/ 63(gaps) * 4(gaps)
+            scanID = int((angle + ring_coeff1) / ring_coeff2 + 0.5);
+            // scanID = int((angle + 15) / 2 + 0.5);
+
             if (scanID > (N_SCANS - 1) || scanID < 0)
             {
+                printf("scanID not valid: %d\n", scanID);
                 count--;
                 continue;
             }
@@ -223,7 +236,14 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
             printf("wrong scan number\n");
             ROS_BREAK();
         }
-        //printf("angle %f scanID %d \n", angle, scanID);
+
+        auto iter = scan_checklist.find(scanID);
+        if (iter == scan_checklist.end())
+            scan_checklist[scanID] = 0;
+
+        scan_checklist[scanID] += 1;
+
+        // printf("angle %f scanID %d. scans total: %d \n", angle, scanID, scan_checklist.size());
 
         float ori = -atan2(point.y, point.x);
         if (!halfPassed)
@@ -261,7 +281,15 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     }
     
     cloudSize = count;
-    printf("points size %d \n", cloudSize);
+    printf("points size %d. endori - startori = %f - %f = %f. \n", cloudSize, endOri, startOri, endOri - startOri);
+    int total_points_checked = 0;
+    for(auto scans_count : scan_checklist)
+    {
+        // printf("scanID: %d, points: %d\n", scans_count.first, scans_count.second);
+        total_points_checked += scans_count.second;
+    }
+    printf("scans total: %d. Total checked: %d\n", scan_checklist.size(), total_points_checked);
+
 
     pcl::PointCloud<PointType>::Ptr laserCloud(new pcl::PointCloud<PointType>());
     for (int i = 0; i < N_SCANS; i++)
@@ -430,6 +458,9 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     }
     printf("sort q time %f \n", t_q_sort);
     printf("seperate points time %f \n", t_pts.toc());
+    printf("Sizes: laserCloud: %d, cornerPointsSharp: %d, cornerPointsLessSharp: %d, surfPointsFlat: %d. surfPointsLessFlat: %d\n",
+            laserCloud->points.size(), cornerPointsSharp.size(), cornerPointsLessSharp.size(), surfPointsFlat.size(), surfPointsLessFlat.size()
+          );
 
 
     sensor_msgs::PointCloud2 laserCloudOutMsg;
@@ -463,19 +494,20 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     pubSurfPointsLessFlat.publish(surfPointsLessFlat2);
 
     // pub each scam
-    if(PUB_EACH_LINE)
+    if(true)//(PUB_EACH_LINE)
     {
         for(int i = 0; i< N_SCANS; i++)
         {
-            sensor_msgs::PointCloud2 scanMsg;
-            pcl::toROSMsg(laserCloudScans[i], scanMsg);
-            scanMsg.header.stamp = laserCloudMsg->header.stamp;
-            scanMsg.header.frame_id = "/lidar_init_" + loam_id;
-            pubEachScan[i].publish(scanMsg);
+            // sensor_msgs::PointCloud2 scanMsg;
+            // pcl::toROSMsg(laserCloudScans[i], scanMsg);
+            printf("ScanID: %d. Points: %d\n", i, laserCloudScans[i].size());
+            // scanMsg.header.stamp = laserCloudMsg->header.stamp;
+            // scanMsg.header.frame_id = "/lidar_init_" + loam_id;
+            // pubEachScan[i].publish(scanMsg);
         }
     }
 
-    printf("scan registration time %f ms *************\n", t_whole.toc());
+    printf("scan registration time %f ms *************\n\n", t_whole.toc());
     if(t_whole.toc() > 100)
         ROS_WARN("scan registration process over 100ms");
 }
@@ -541,6 +573,20 @@ int main(int argc, char **argv)
         printf(KRED "scan_line not found. Exiting!\n" RESET);
         exit(-1);
     }
+
+    if ( nh.getParam("ring_coeff1", ring_coeff1) && nh.getParam("ring_coeff2", ring_coeff2) )
+    {
+        printf("ring_coeff1 and ring_coeff2 found: %f. %f\n", ring_coeff1, ring_coeff2);
+    }
+    else
+    {
+        ring_coeff1 = 16.611;
+        ring_coeff2 = 2.1093;
+        printf("ring_coeff1 not found. "
+               "Using the defaults: ring_coeff1 = %f. ring_coeff2 = %f\n",
+                ring_coeff1, ring_coeff2);
+    }
+    
 
     if( nh.getParam("minimum_range", MINIMUM_RANGE) )
         printf("minimum_range found: %f\n", MINIMUM_RANGE);
