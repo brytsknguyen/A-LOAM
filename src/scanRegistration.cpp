@@ -38,8 +38,8 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include "aloam_velodyne/common.h"
-#include "aloam_velodyne/tic_toc.h"
+#include "aloam/common.h"
+#include "aloam/tic_toc.h"
 #include <nav_msgs/Odometry.h>
 #include <opencv/cv.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -162,11 +162,10 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     removeClosedPointCloud(laserCloudIn, laserCloudIn, MINIMUM_RANGE);
 
 
-    int cloudSize = laserCloudIn.points.size();
+    int cloudSize  = laserCloudIn.points.size();
     float startOri = -atan2(laserCloudIn.points[0].y, laserCloudIn.points[0].x);
-    float endOri = -atan2(laserCloudIn.points[cloudSize - 1].y,
-                          laserCloudIn.points[cloudSize - 1].x) +
-                   2 * M_PI;
+    float endOri   = -atan2(laserCloudIn.points[cloudSize - 1].y,
+                            laserCloudIn.points[cloudSize - 1].x) + 2 * M_PI;
 
     if (endOri - startOri > 3 * M_PI)
     {
@@ -180,6 +179,7 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 
     bool halfPassed = false;
     int count = cloudSize;
+    int rejected_count = 0;
     PointType point;
     std::vector<pcl::PointCloud<PointType>> laserCloudScans(N_SCANS);
 
@@ -192,7 +192,7 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
         point.z = laserCloudIn.points[i].z;
 
         float angle = atan(point.z / sqrt(point.x * point.x + point.y * point.y)) * 180 / M_PI;
-        int scanID = 0;
+        int scanID  = 0;
 
         if (N_SCANS == 16)
         {
@@ -203,8 +203,9 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 
             if (scanID > (N_SCANS - 1) || scanID < 0)
             {
-                printf("scanID not valid: %d\n", scanID);
+                // printf("scanID not valid: %d\n", scanID);
                 count--;
+                rejected_count++;
                 continue;
             }
         }
@@ -288,7 +289,7 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
         // printf("scanID: %d, points: %d\n", scans_count.first, scans_count.second);
         total_points_checked += scans_count.second;
     }
-    printf("scans total: %d. Total checked: %d\n", scan_checklist.size(), total_points_checked);
+    printf("scans total: %d. Total checked: %d. Rejected: %d\n", scan_checklist.size(), total_points_checked, rejected_count);
 
 
     pcl::PointCloud<PointType>::Ptr laserCloud(new pcl::PointCloud<PointType>());

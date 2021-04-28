@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <launch>
     
+    <arg name="M_PI"        default="3.141592653589793"/>
+    <arg name="M_PI_DIV_2"  default="1.57079632679"/>
+    <arg name="M_PI_DIV_m2" default="-1.57079632679"/>
+
     <arg name="horz" default="true" />
     <group if="$(arg horz)">
         <!-- ID for a multi LOAM case -->
@@ -13,7 +17,7 @@
               0.0,  0.0, -1.0,  0.05,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
-        <node pkg="aloam_velodyne" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
+        <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node1/points"/>
             <param name="scan_line"        type="int"     value="16"/>
@@ -21,20 +25,20 @@
         </node>
 
         <!-- odmetry -->
-        <node pkg="aloam_velodyne" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)"    output="screen" >
+        <node pkg="aloam" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)"    output="screen" >
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
             <param name="mapping_skip_frame" type="int" value="1" />
         </node>
 
         <!-- mapping -->       
-         <node pkg="aloam_velodyne" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="screen" >
+         <node pkg="aloam" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="screen" >
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
             <param name="mapping_line_resolution"  type="double" value="0.2" />
             <param name="mapping_plane_resolution" type="double" value="0.4" />
         </node>
 
-        <node pkg="tf" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
-              args="0 0 0 -1.719149313214415 0 3.141592653589793 world camera_init_$(arg loam_id) 10" />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
+              args="0 0 0 0 0 $(arg M_PI) world lidar_init_$(arg loam_id)" />
 
     </group>
 
@@ -51,7 +55,7 @@
               0.0,  1.0,  0.0,  0.05,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
-        <node pkg="aloam_velodyne" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
+        <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node2/points"/>
             <param name="scan_line"        type="int"     value="16"/>
             <param name="minimum_range"    type="double"  value="0.3"/>
@@ -59,30 +63,30 @@
         </node>
         
         <!-- odmetry -->
-        <node pkg="aloam_velodyne" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)"    output="log" >
+        <node pkg="aloam" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)"    output="log" >
             <param name="mapping_skip_frame" type="int" value="1" />
             <param name="loam_id"            type="string"  value="$(arg loam_id)"/>
         </node>
         
         <!-- mapping -->        
-        <node pkg="aloam_velodyne" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="log" >
+        <node pkg="aloam" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="log" >
             <param name="mapping_line_resolution"  type="double" value="0.2" />
             <param name="mapping_plane_resolution" type="double" value="0.4" />
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
         </node>
 
-        <node pkg="tf" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
-              args="0 0 0 1.431169986635350 0 -1.570796326794897 world camera_init_$(arg loam_id) 10" />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
+              args="-0.5 -0.03 -0.005 $(arg M_PI) 0 $(arg M_PI_DIV_m2) world lidar_init_$(arg loam_id)" />
 
     </group>
 
     <arg name="rviz" default="true" />
     <group if="$(arg rviz)">
-        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find aloam_velodyne)/rviz_cfg/aloam_velodyne.rviz" />
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find aloam)/rviz_cfg/ntuviral.rviz" />
     </group>
 
     <param name ="/use_sim_time" value="true"/>
     <node  pkg="rosbag" required ="false" type="play" name="player"
-           args="--clock $(env HOME)/DATASETS/bca/clementi_20200116/007_321_facade_complete/imu_uwb_cam_lidar_leica.bag" />
+           args="--clock /home/$(env USER)/DATASETS/NTU_VIRAL/eee_01/eee_01.bag" />
 
 </launch>

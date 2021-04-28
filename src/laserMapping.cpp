@@ -36,7 +36,7 @@
 
 #include <math.h>
 #include <vector>
-#include <aloam_velodyne/common.h>
+#include <aloam/common.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -59,8 +59,8 @@
 #include <string>
 
 #include "lidarFactor.hpp"
-#include "aloam_velodyne/common.h"
-#include "aloam_velodyne/tic_toc.h"
+#include "aloam/common.h"
+#include "aloam/tic_toc.h"
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -324,9 +324,9 @@ void process()
 			int centerCubeJ = int((t_w_curr.y() + 25.0) / 50.0) + laserCloudCenHeight;
 			int centerCubeK = int((t_w_curr.z() + 25.0) / 50.0) + laserCloudCenDepth;
 
-			printf("centerCube: %d, %d, %d. laserCloudCen: %d, %d, %d\n",
-					centerCubeI, centerCubeJ, centerCubeK,
-					laserCloudCenWidth, laserCloudCenHeight, laserCloudCenDepth);
+			// printf("centerCube: %d, %d, %d. laserCloudCen: %d, %d, %d\n",
+			// 		centerCubeI, centerCubeJ, centerCubeK,
+			// 		laserCloudCenWidth, laserCloudCenHeight, laserCloudCenDepth);
 
 			if (t_w_curr.x() + 25.0 < 0)
 				centerCubeI--;
@@ -368,8 +368,8 @@ void process()
 				laserCloudCenWidth++;
 			}
 
-			printf("1: centerCubeI: %d. laserCloudCenWidth: %d\n",
-					centerCubeI, laserCloudCenWidth);
+			// printf("1: centerCubeI: %d. laserCloudCenWidth: %d\n",
+			// 		centerCubeI, laserCloudCenWidth);
 
 			while (centerCubeI >= laserCloudWidth - 3)
 			{ 
@@ -402,8 +402,8 @@ void process()
 				laserCloudCenWidth--;
 			}
 
-			printf("2: centerCubeI: %d. laserCloudCenWidth: %d\n",
-								centerCubeI, laserCloudCenWidth);
+			// printf("2: centerCubeI: %d. laserCloudCenWidth: %d\n",
+			// 					centerCubeI, laserCloudCenWidth);
 					
 			while (centerCubeJ < 3)
 			{
@@ -436,8 +436,8 @@ void process()
 				laserCloudCenHeight++;
 			}
 
-			printf("3: centerCubeJ: %d. laserCloudCenWidth: %d\n",
-					centerCubeJ, laserCloudCenHeight);
+			// printf("3: centerCubeJ: %d. laserCloudCenWidth: %d\n",
+			// 		centerCubeJ, laserCloudCenHeight);
 
 			while (centerCubeJ >= laserCloudHeight - 3)
 			{
@@ -470,8 +470,8 @@ void process()
 				laserCloudCenHeight--;
 			}
 
-			printf("4: centerCubeJ: %d. laserCloudCenWidth: %d\n",
-					centerCubeJ, laserCloudCenHeight);
+			// printf("4: centerCubeJ: %d. laserCloudCenWidth: %d\n",
+			// 		centerCubeJ, laserCloudCenHeight);
 
 			while (centerCubeK < 3)
 			{
@@ -504,8 +504,8 @@ void process()
 				laserCloudCenDepth++;
 			}
 
-			printf("5: centerCubeK: %d. laserCloudCenDepth: %d\n",
-					centerCubeK, laserCloudCenDepth);
+			// printf("5: centerCubeK: %d. laserCloudCenDepth: %d\n",
+			// 		centerCubeK, laserCloudCenDepth);
 
 			while (centerCubeK >= laserCloudDepth - 3)
 			{
@@ -538,8 +538,8 @@ void process()
 				laserCloudCenDepth--;
 			}
 
-			printf("6: centerCubeK: %d. laserCloudCenDepth: %d\n",
-					centerCubeK, laserCloudCenDepth);
+			// printf("6: centerCubeK: %d. laserCloudCenDepth: %d\n",
+			// 		centerCubeK, laserCloudCenDepth);
 
 			int laserCloudValidNum = 0;
 			int laserCloudSurroundNum = 0;
@@ -572,15 +572,15 @@ void process()
 				*laserCloudCornerFromMap += *laserCloudCornerArray[laserCloudValidInd[i]];
 				*laserCloudSurfFromMap += *laserCloudSurfArray[laserCloudValidInd[i]];
 			}
-			for(int i = 0; i < laserCloudNum; i++)
-			{
-				if( laserCloudCornerArray[i]->points.size() != 0 )
-				{
-					printf("Cube: %d. Size: %d\n", i, laserCloudCornerArray[i]->points.size());
-				}
-			}
-			printf("laserCloudCornerFromMap->points.size(): %d.\n",
-				   laserCloudCornerFromMap->points.size());
+			// for(int i = 0; i < laserCloudNum; i++)
+			// {
+			// 	if( laserCloudCornerArray[i]->points.size() != 0 )
+			// 	{
+			// 		printf("Cube: %d. Size: %d\n", i, laserCloudCornerArray[i]->points.size());
+			// 	}
+			// }
+			// printf("laserCloudCornerFromMap->points.size(): %d.\n",
+			// 	   laserCloudCornerFromMap->points.size());
 			int laserCloudCornerFromMapNum = laserCloudCornerFromMap->points.size();
 			int laserCloudSurfFromMapNum = laserCloudSurfFromMap->points.size();
 

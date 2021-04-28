@@ -52,8 +52,8 @@
 #include <mutex>
 #include <queue>
 
-#include "aloam_velodyne/common.h"
-#include "aloam_velodyne/tic_toc.h"
+#include "aloam/common.h"
+#include "aloam/tic_toc.h"
 #include "lidarFactor.hpp"
 
 #define DISTORTION 0
