@@ -19,24 +19,24 @@ echo "BAG DURATION:" $BAG_DUR "=> LOG_DUR:" $LOG_DUR;
 
 let ANC_MAX=ANC_ID_MAX+1
 
-export ALOAM_OUTPUT_DIR=$EPOC_DIR/result_${EXP_NAME}_${ANC_MAX}anc;
+export EXP_OUTPUT_DIR=$EPOC_DIR/result_${EXP_NAME}_${ANC_MAX}anc;
 if ((FUSE_VIS==1))
 then
-export ALOAM_OUTPUT_DIR=${ALOAM_OUTPUT_DIR}_vis;
+export EXP_OUTPUT_DIR=${EXP_OUTPUT_DIR}_vis;
 fi
-echo OUTPUT DIR: $ALOAM_OUTPUT_DIR;
+echo OUTPUT DIR: $EXP_OUTPUT_DIR;
 
 export BA_LOOP_LOG_DIR=/home/$USER;
 if $LOG_DATA
 then
-export BA_LOOP_LOG_DIR=$ALOAM_OUTPUT_DIR;
+export BA_LOOP_LOG_DIR=$EXP_OUTPUT_DIR;
 fi
 echo BA LOG DIR: $BA_LOOP_LOG_DIR;
 
-mkdir -p $ALOAM_OUTPUT_DIR/ ;
-cp -R $ROS_PKG_DIR/config $ALOAM_OUTPUT_DIR;
-cp -R $ROS_PKG_DIR/launch $ALOAM_OUTPUT_DIR;
-roslaunch aloam run_ntuviral.launch log_dir:=$ALOAM_OUTPUT_DIR \
+mkdir -p $EXP_OUTPUT_DIR/ ;
+cp -R $ROS_PKG_DIR/config $EXP_OUTPUT_DIR;
+cp -R $ROS_PKG_DIR/launch $EXP_OUTPUT_DIR;
+roslaunch aloam run_ntuviral.launch log_dir:=$EXP_OUTPUT_DIR \
 autorun:=true \
 bag_file:=$DATASET_LOCATION/$EXP_NAME/$EXP_NAME.bag \
 & \
@@ -46,7 +46,7 @@ then
 echo CAPTURING SCREEN ON;
 sleep 1;
 ffmpeg -video_size 1920x1080 -framerate 1 -f x11grab -i :0.0+1920,0 \
--loglevel quiet -t $LOG_DUR -y $ALOAM_OUTPUT_DIR/$EXP_NAME.mp4 \
+-loglevel quiet -t $LOG_DUR -y $EXP_OUTPUT_DIR/$EXP_NAME.mp4 \
 & \
 else
 echo CAPTURING SCREEN OFF;
@@ -57,24 +57,24 @@ if $LOG_DATA
 then
 echo LOGGING ON;
 sleep 5;
-rosparam dump $ALOAM_OUTPUT_DIR/allparams.yaml;
-timeout $LOG_DUR rostopic echo -p --nostr --noarr /viral2_odometry/pred_odom \
-> $ALOAM_OUTPUT_DIR/predict_odom.csv \
+rosparam dump $EXP_OUTPUT_DIR/allparams.yaml;
+timeout $LOG_DUR rostopic echo -p --nostr --noarr /aft_mapped_to_init_high_frec_horz \
+> $EXP_OUTPUT_DIR/opt_odom_horz.csv \
 & \
-timeout $LOG_DUR rostopic echo -p --nostr --noarr /viral2_odometry/opt_odom \
-> $ALOAM_OUTPUT_DIR/opt_odom.csv \
+timeout $LOG_DUR rostopic echo -p --nostr --noarr /aft_mapped_to_init_high_frec_vert \
+> $EXP_OUTPUT_DIR/opt_odom_vert.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /leica/pose/relative \
-> $ALOAM_OUTPUT_DIR/leica_pose.csv \
+> $EXP_OUTPUT_DIR/leica_pose.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /dji_sdk/imu \
-> $ALOAM_OUTPUT_DIR/dji_sdk_imu.csv \
+> $EXP_OUTPUT_DIR/dji_sdk_imu.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /imu/imu \
-> $ALOAM_OUTPUT_DIR/vn100_imu.csv \
+> $EXP_OUTPUT_DIR/vn100_imu.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /viral2_odometry/optimization_status \
-> $ALOAM_OUTPUT_DIR/optimization_status.csv \
+> $EXP_OUTPUT_DIR/optimization_status.csv \
 ;
 else
 echo LOGGING OFF;
