@@ -20,8 +20,10 @@
         <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node1/points"/>
-            <param name="scan_line"        type="int"     value="16"/>
+            <param name="ring_coeff1"      type="int"     value="16.611"/>
+            <param name="ring_coeff2"      type="int"     value="2.1093"/>
             <param name="minimum_range"    type="double"  value="0.3"/>
+            <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
         </node>
 
         <!-- odmetry -->
@@ -58,6 +60,8 @@
         <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node2/points"/>
             <param name="scan_line"        type="int"     value="16"/>
+            <param name="ring_coeff1"      type="int"     value="16.611"/>
+            <param name="ring_coeff2"      type="int"     value="2.1093"/>
             <param name="minimum_range"    type="double"  value="0.3"/>
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
         </node>
