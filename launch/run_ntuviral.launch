@@ -12,31 +12,31 @@
 
         <!-- scan registration -->
         <rosparam param="/ascanRegistration_$(arg loam_id)/T_B_Bl">
-            [-1.0,  0.0,  0.0, -0.05,
+            [ 1.0,  0.0,  0.0, -0.05,
               0.0,  1.0,  0.0,  0.0,
-              0.0,  0.0, -1.0,  0.05,
+              0.0,  0.0,  1.0,  0.055,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
         <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
-            <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node1/points"/>
-            <param name="ring_coeff1"      type="int"     value="16.611"/>
-            <param name="ring_coeff2"      type="int"     value="2.1093"/>
+            <param name="scan_line"        type="int"     value="16"/>
+            <param name="ring_coeff1"      type="double"  value="16.611"/>
+            <param name="ring_coeff2"      type="double"  value="2.1093"/>
             <param name="minimum_range"    type="double"  value="0.3"/>
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
         </node>
 
         <!-- odmetry -->
-        <node pkg="aloam" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)"    output="screen" >
-            <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
+        <node pkg="aloam" type="alaserOdometry" name="alaserOdometry_$(arg loam_id)" output="screen" >
             <param name="mapping_skip_frame" type="int" value="1" />
+            <param name="loam_id"            type="string"  value="$(arg loam_id)"/>
         </node>
 
         <!-- mapping -->       
-         <node pkg="aloam" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="screen" >
-            <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
+         <node pkg="aloam" type="alaserMapping" name="alaserMapping_$(arg loam_id)" output="screen" >
             <param name="mapping_line_resolution"  type="double" value="0.2" />
             <param name="mapping_plane_resolution" type="double" value="0.4" />
+            <param name="loam_id"                  type="string" value="$(arg loam_id)"/>
         </node>
 
         <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"
@@ -52,16 +52,16 @@
 
         <!-- scan registration -->
         <rosparam param="/ascanRegistration_$(arg loam_id)/T_B_Bl">
-            [-1.0,  0.0,  0.0, -0.56,
-              0.0,  0.0,  1.0,  0.0,
+            [-1.0,  0.0,  0.0, -0.55,
+              0.0,  0.0,  1.0,  0.03,
               0.0,  1.0,  0.0,  0.05,
               0.0,  0.0,  0.0,  0.0 ]
         </rosparam>
         <node pkg="aloam" type="ascanRegistration" name="ascanRegistration_$(arg loam_id)" output="screen" >
             <param name="pointcloud_topic" type="string"  value="/os1_cloud_node2/points"/>
             <param name="scan_line"        type="int"     value="16"/>
-            <param name="ring_coeff1"      type="int"     value="16.611"/>
-            <param name="ring_coeff2"      type="int"     value="2.1093"/>
+            <param name="ring_coeff1"      type="double"  value="16.611"/>
+            <param name="ring_coeff2"      type="double"  value="2.1093"/>
             <param name="minimum_range"    type="double"  value="0.3"/>
             <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
         </node>
@@ -76,7 +76,7 @@
         <node pkg="aloam" type="alaserMapping"     name="alaserMapping_$(arg loam_id)"  output="log" >
             <param name="mapping_line_resolution"  type="double" value="0.2" />
             <param name="mapping_plane_resolution" type="double" value="0.4" />
-            <param name="loam_id"          type="string"  value="$(arg loam_id)"/>
+            <param name="loam_id"                  type="string"  value="$(arg loam_id)"/>
         </node>
 
         <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_broadcaster_$(arg loam_id)"

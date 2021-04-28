@@ -497,15 +497,15 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     // pub each scam
     if(true)//(PUB_EACH_LINE)
     {
+        printf("ScanID:");
         for(int i = 0; i< N_SCANS; i++)
-        {
-            // sensor_msgs::PointCloud2 scanMsg;
-            // pcl::toROSMsg(laserCloudScans[i], scanMsg);
-            printf("ScanID: %d. Points: %d\n", i, laserCloudScans[i].size());
-            // scanMsg.header.stamp = laserCloudMsg->header.stamp;
-            // scanMsg.header.frame_id = "/lidar_init_" + loam_id;
-            // pubEachScan[i].publish(scanMsg);
-        }
+            printf("  %4d", i);
+        printf("\n");
+
+        printf("Points:");
+        for(int i = 0; i< N_SCANS; i++)
+            printf("  %4d", laserCloudScans[i].size());
+        printf("\n");
     }
 
     printf("scan registration time %f ms *************\n\n", t_whole.toc());
