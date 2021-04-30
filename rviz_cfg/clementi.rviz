@@ -4,9 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
         - /mapping_horz1/Odom1/Shape1
+        - /mapping_vert1/Odom1
         - /mapping_vert1/Odom1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 225
@@ -228,35 +227,19 @@ Visualization Manager:
       Unreliable: false
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        aft_mapped_horz:
-          Value: true
-        aft_mapped_vert:
-          Value: true
-        lidar_init_horz:
-          Value: true
-        lidar_init_vert:
-          Value: true
-        world:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          lidar_init_horz:
-            aft_mapped_horz:
-              {}
-          lidar_init_vert:
-            aft_mapped_vert:
-              {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Class: rviz/Group
       Displays:
         - Alpha: 1
@@ -422,8 +405,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 39.6196403503418
-            Min Value: -34.51142883300781
+            Max Value: 33.02781677246094
+            Min Value: -4.723794937133789
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -1117,7 +1100,7 @@ Visualization Manager:
           Shape:
             Alpha: 1
             Axes Length: 1.5
-            Axes Radius: 0.20000000298023224
+            Axes Radius: 0.4000000059604645
             Color: 255; 25; 0
             Head Length: 0.30000001192092896
             Head Radius: 0.10000000149011612
@@ -1157,25 +1140,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 26.115102767944336
+      Distance: 17.89461898803711
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -5.993904113769531
-        Y: -1.1241098642349243
-        Z: -0.0031075049191713333
+        X: -10.703063011169434
+        Y: -9.237725257873535
+        Z: -0.003109558718279004
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8897976875305176
+      Pitch: 0.6997963190078735
       Target Frame: aft_mapped_horz
       Value: XYOrbit (rviz)
-      Yaw: 3.1604089736938477
+      Yaw: 3.4204063415527344
     Saved: ~
 Window Geometry:
   Displays:
