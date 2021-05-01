@@ -68,16 +68,16 @@ timeout $LOG_DUR rostopic echo -p --nostr --noarr /aft_mapped_to_init_high_frec_
 > $EXP_OUTPUT_DIR/opt_odom_latr.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /airsim_node/drone_0/odom_global \
-> $VIRAL2_OUTPUT_DIR/leica_pose.csv \
+> $EXP_OUTPUT_DIR/leica_pose.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /dji_sdk/imu \
-> $VIRAL2_OUTPUT_DIR/dji_sdk_imu.csv \
+> $EXP_OUTPUT_DIR/dji_sdk_imu.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /airsim_node/drone_0/imu/Imu \
-> $VIRAL2_OUTPUT_DIR/vn100_imu.csv \
+> $EXP_OUTPUT_DIR/vn100_imu.csv \
 & \
 timeout $LOG_DUR rostopic echo -p --nostr --noarr /viral2_odometry/optimization_status \
-> $VIRAL2_OUTPUT_DIR/optimization_status.csv \
+> $EXP_OUTPUT_DIR/optimization_status.csv \
 ;
 else
 echo LOGGING OFF;

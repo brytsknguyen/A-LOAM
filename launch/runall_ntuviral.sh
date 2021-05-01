@@ -12,7 +12,7 @@ cd $CURR_DIR
 echo CURRENT DIR: $CURR_DIR
 echo VIRAL DIR:   $PACKAGE_DIR
 
-export EPOC_DIR=/home/$USER/nucssd2/MATLAB_WS/RAL_edits/viralslam/RAL_VIRAL_SLAM/ntuviral_aloam
+export EPOC_DIR=/home/$USER/nucssd2/MATLAB_WS/RAL_VIRAL_SLAM/ntuviral_aloam
 export DATASET_LOCATION=/home/$USER/DATASETS/NTU_VIRAL/
 # export DATASET_LOCATION=/media/$USER/myHPSSD/NTU_VIRAL
 
