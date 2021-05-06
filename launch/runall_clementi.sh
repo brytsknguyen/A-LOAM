@@ -22,11 +22,11 @@ export LOG_DATA=true;
 #region NO VIS, NO UWB ------------------------------------------------------------------------------------------------
 
 wait;
-./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk321_full    $CAPTURE_SCREEN $LOG_DATA 450 0 1 0.75 -1;
+./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk321_full    $CAPTURE_SCREEN $LOG_DATA 450 0 0 0.75 -1;
 wait;
-./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk323_earlier $CAPTURE_SCREEN $LOG_DATA 450 0 1 0.75 -1;
+./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk323_earlier $CAPTURE_SCREEN $LOG_DATA 450 0 0 0.75 -1;
 wait;
-./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk323_later   $CAPTURE_SCREEN $LOG_DATA 450 0 1 0.75 -1;
+./run_one_bag_clementi.sh $EPOC_DIR $DATASET_LOCATION $PACKAGE_DIR blk323_later   $CAPTURE_SCREEN $LOG_DATA 450 0 0 0.75 -1;
 
 #endregion NO VIS, NO UWB ---------------------------------------------------------------------------------------------
 
