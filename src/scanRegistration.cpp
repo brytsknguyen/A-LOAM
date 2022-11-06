@@ -41,7 +41,7 @@
 #include "aloam/common.h"
 #include "aloam/tic_toc.h"
 #include <nav_msgs/Odometry.h>
-#include <opencv2/opencv.hpp>
+#include <opencv/cv.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/common/transforms.h>
 #include <pcl/point_cloud.h>
