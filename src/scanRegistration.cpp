@@ -150,8 +150,8 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     pcl::PointCloud<pcl::PointXYZ> laserCloudIn;
     pcl::fromROSMsg(*laserCloudMsg, laserCloudIn);
 
-    std::cout << "laserCloudMsg datasize: " << laserCloudMsg->data.size() << " "
-              << "laserCloudIn points: "    << laserCloudIn.points.size() << std::endl;
+    // std::cout << "laserCloudMsg datasize: " << laserCloudMsg->data.size() << " "
+    //           << "laserCloudIn points: "    << laserCloudIn.points.size() << std::endl;
 
     if (T_B_Bl(3, 3) != 0.0)
         pcl::transformPointCloud(laserCloudIn, laserCloudIn, T_B_Bl);
@@ -282,14 +282,14 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     }
     
     cloudSize = count;
-    printf("points size %d. endori - startori = %f - %f = %f. \n", cloudSize, endOri, startOri, endOri - startOri);
+    // printf("points size %d. endori - startori = %f - %f = %f. \n", cloudSize, endOri, startOri, endOri - startOri);
     int total_points_checked = 0;
     for(auto scans_count : scan_checklist)
     {
         // printf("scanID: %d, points: %d\n", scans_count.first, scans_count.second);
         total_points_checked += scans_count.second;
     }
-    printf("scans total: %d. Total checked: %d. Rejected: %d\n", scan_checklist.size(), total_points_checked, rejected_count);
+    // printf("scans total: %d. Total checked: %d. Rejected: %d\n", scan_checklist.size(), total_points_checked, rejected_count);
 
 
     pcl::PointCloud<PointType>::Ptr laserCloud(new pcl::PointCloud<PointType>());
@@ -300,7 +300,7 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
         scanEndInd[i] = laserCloud->size() - 6;
     }
 
-    printf("prepare time %f \n", t_prepare.toc());
+    // printf("prepare time %f \n", t_prepare.toc());
 
     for (int i = 5; i < cloudSize - 5; i++)
     { 
@@ -457,11 +457,11 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 
         surfPointsLessFlat += surfPointsLessFlatScanDS;
     }
-    printf("sort q time %f \n", t_q_sort);
-    printf("seperate points time %f \n", t_pts.toc());
-    printf("Sizes: laserCloud: %d, cornerPointsSharp: %d, cornerPointsLessSharp: %d, surfPointsFlat: %d. surfPointsLessFlat: %d\n",
-            laserCloud->points.size(), cornerPointsSharp.size(), cornerPointsLessSharp.size(), surfPointsFlat.size(), surfPointsLessFlat.size()
-          );
+    // printf("sort q time %f \n", t_q_sort);
+    // printf("seperate points time %f \n", t_pts.toc());
+    // printf("Sizes: laserCloud: %d, cornerPointsSharp: %d, cornerPointsLessSharp: %d, surfPointsFlat: %d. surfPointsLessFlat: %d\n",
+    //         laserCloud->points.size(), cornerPointsSharp.size(), cornerPointsLessSharp.size(), surfPointsFlat.size(), surfPointsLessFlat.size()
+    //       );
 
 
     sensor_msgs::PointCloud2 laserCloudOutMsg;
@@ -497,20 +497,20 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     // pub each scam
     if(true)//(PUB_EACH_LINE)
     {
-        printf("ScanID:");
-        for(int i = 0; i< N_SCANS; i++)
-            printf("  %4d", i);
-        printf("\n");
+        // printf("ScanID:");
+        // for(int i = 0; i< N_SCANS; i++)
+        //     printf("  %4d", i);
+        // printf("\n");
 
-        printf("Points:");
-        for(int i = 0; i< N_SCANS; i++)
-            printf("  %4d", laserCloudScans[i].size());
-        printf("\n");
+        // printf("Points:");
+        // for(int i = 0; i< N_SCANS; i++)
+        //     printf("  %4d", laserCloudScans[i].size());
+        // printf("\n");
     }
 
-    printf("scan registration time %f ms *************\n\n", t_whole.toc());
-    if(t_whole.toc() > 100)
-        ROS_WARN("scan registration process over 100ms");
+    // printf("scan registration time %f ms *************\n\n", t_whole.toc());
+    // if(t_whole.toc() > 100)
+    //     ROS_WARN("scan registration process over 100ms");
 }
 
 int main(int argc, char **argv)

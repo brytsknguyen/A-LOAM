@@ -310,7 +310,7 @@ void process()
 			while(!cornerLastBuf.empty())
 			{
 				cornerLastBuf.pop();
-				printf("drop lidar frame in mapping for real time performance \n");
+				// printf("drop lidar frame in mapping for real time performance \n");
 			}
 
 			mBuf.unlock();
@@ -594,18 +594,18 @@ void process()
 			downSizeFilterSurf.filter(*laserCloudSurfStack);
 			int laserCloudSurfStackNum = laserCloudSurfStack->points.size();
 
-			printf("map prepare time %f ms\n", t_shift.toc());
-			printf("map corner num %d, surf num %d. "
-				   "laserCloudValidNum: %d. laserCloudSurroundNum: %d\n",
-				   laserCloudCornerFromMapNum, laserCloudSurfFromMapNum,
-				   laserCloudValidNum, laserCloudSurroundNum);
+			// printf("map prepare time %f ms\n", t_shift.toc());
+			// printf("map corner num %d, surf num %d. "
+			// 	   "laserCloudValidNum: %d. laserCloudSurroundNum: %d\n",
+			// 	   laserCloudCornerFromMapNum, laserCloudSurfFromMapNum,
+			// 	   laserCloudValidNum, laserCloudSurroundNum);
 			if (laserCloudCornerFromMapNum > 10 && laserCloudSurfFromMapNum > 50)
 			{
 				TicToc t_opt;
 				TicToc t_tree;
 				kdtreeCornerFromMap->setInputCloud(laserCloudCornerFromMap);
 				kdtreeSurfFromMap->setInputCloud(laserCloudSurfFromMap);
-				printf("build tree time %f ms \n", t_tree.toc());
+				// printf("build tree time %f ms \n", t_tree.toc());
 
 				for (int iterCount = 0; iterCount < 2; iterCount++)
 				{
@@ -755,7 +755,7 @@ void process()
 					//printf("corner num %d used corner num %d \n", laserCloudCornerStackNum, corner_num);
 					//printf("surf num %d used surf num %d \n", laserCloudSurfStackNum, surf_num);
 
-					printf("mapping data assosiation time %f ms \n", t_data.toc());
+					// printf("mapping data assosiation time %f ms \n", t_data.toc());
 
 					TicToc t_solver;
 					ceres::Solver::Options options;
@@ -766,14 +766,14 @@ void process()
 					options.gradient_check_relative_precision = 1e-4;
 					ceres::Solver::Summary summary;
 					ceres::Solve(options, &problem, &summary);
-					printf("mapping solver time %f ms \n", t_solver.toc());
-
+					// printf("mapping solver time %f ms \n", t_solver.toc());
+					std::cout << summary.BriefReport() << std::endl;
 					//printf("time %f \n", timeLaserOdometry);
 					//printf("corner factor num %d surf factor num %d\n", corner_num, surf_num);
 					//printf("result q %f %f %f %f result t %f %f %f\n", parameters[3], parameters[0], parameters[1], parameters[2],
 					//	   parameters[4], parameters[5], parameters[6]);
 				}
-				printf("mapping optimization time %f \n", t_opt.toc());
+				// printf("mapping optimization time %f \n", t_opt.toc());
 			}
 			else
 			{
@@ -829,7 +829,7 @@ void process()
 					laserCloudSurfArray[cubeInd]->push_back(pointSel);
 				}
 			}
-			printf("add points time %f ms\n", t_add.toc());
+			// printf("add points time %f ms\n", t_add.toc());
 
 			
 			TicToc t_filter;
@@ -847,7 +847,7 @@ void process()
 				downSizeFilterSurf.filter(*tmpSurf);
 				laserCloudSurfArray[ind] = tmpSurf;
 			}
-			printf("filter time %f ms \n", t_filter.toc());
+			// printf("filter time %f ms \n", t_filter.toc());
 			
 			TicToc t_pub;
 			//publish surround map for every 5 frame
@@ -895,9 +895,9 @@ void process()
 			laserCloudFullRes3.header.frame_id = "/lidar_init_" + loam_id;
 			pubLaserCloudFullRes.publish(laserCloudFullRes3);
 
-			printf("mapping pub time %f ms \n", t_pub.toc());
+			// printf("mapping pub time %f ms \n", t_pub.toc());
 
-			printf("whole mapping time %f ms +++++\n\n", t_whole.toc());
+			// printf("whole mapping time %f ms +++++\n\n", t_whole.toc());
 
 			nav_msgs::Odometry odomAftMapped;
 			odomAftMapped.header.frame_id = "/lidar_init_" + loam_id;
