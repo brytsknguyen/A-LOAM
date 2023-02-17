@@ -467,31 +467,31 @@ void laserCloudHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
     sensor_msgs::PointCloud2 laserCloudOutMsg;
     pcl::toROSMsg(*laserCloud, laserCloudOutMsg);
     laserCloudOutMsg.header.stamp = laserCloudMsg->header.stamp;
-    laserCloudOutMsg.header.frame_id = "/lidar_init_" + loam_id;
+    laserCloudOutMsg.header.frame_id = "lidar_init_" + loam_id;
     pubLaserCloud.publish(laserCloudOutMsg);
 
     sensor_msgs::PointCloud2 cornerPointsSharpMsg;
     pcl::toROSMsg(cornerPointsSharp, cornerPointsSharpMsg);
     cornerPointsSharpMsg.header.stamp = laserCloudMsg->header.stamp;
-    cornerPointsSharpMsg.header.frame_id = "/lidar_init_" + loam_id;
+    cornerPointsSharpMsg.header.frame_id = "lidar_init_" + loam_id;
     pubCornerPointsSharp.publish(cornerPointsSharpMsg);
 
     sensor_msgs::PointCloud2 cornerPointsLessSharpMsg;
     pcl::toROSMsg(cornerPointsLessSharp, cornerPointsLessSharpMsg);
     cornerPointsLessSharpMsg.header.stamp = laserCloudMsg->header.stamp;
-    cornerPointsLessSharpMsg.header.frame_id = "/lidar_init_" + loam_id;
+    cornerPointsLessSharpMsg.header.frame_id = "lidar_init_" + loam_id;
     pubCornerPointsLessSharp.publish(cornerPointsLessSharpMsg);
 
     sensor_msgs::PointCloud2 surfPointsFlat2;
     pcl::toROSMsg(surfPointsFlat, surfPointsFlat2);
     surfPointsFlat2.header.stamp = laserCloudMsg->header.stamp;
-    surfPointsFlat2.header.frame_id = "/lidar_init_" + loam_id;
+    surfPointsFlat2.header.frame_id = "lidar_init_" + loam_id;
     pubSurfPointsFlat.publish(surfPointsFlat2);
 
     sensor_msgs::PointCloud2 surfPointsLessFlat2;
     pcl::toROSMsg(surfPointsLessFlat, surfPointsLessFlat2);
     surfPointsLessFlat2.header.stamp = laserCloudMsg->header.stamp;
-    surfPointsLessFlat2.header.frame_id = "/lidar_init_" + loam_id;
+    surfPointsLessFlat2.header.frame_id = "lidar_init_" + loam_id;
     pubSurfPointsLessFlat.publish(surfPointsLessFlat2);
 
     // pub each scam
